@@ -28,20 +28,27 @@ public class StatementPrinter {
         final StringBuilder result = new StringBuilder("Statement for "
                 + invoice.getCustomer() + System.lineSeparator());
 
-        final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-
         for (Performance performance : invoice.getPerformances()) {
 
             final int results;
             results = getAmount(performance);
 
             // add volume credits
-            volumeCredits += getVolumeCredits(performance, result, frmt, results);
+            volumeCredits += getVolumeCredits(performance, result,
+                    NumberFormat.getCurrencyInstance(Locale.US), results);
             totalAmount += results;
         }
-        result.append(String.format("Amount owed is %s%n", frmt.format(totalAmount / Constants.PERCENT_FACTOR)));
+        getAppend(result, totalAmount);
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
+    }
+
+    private static StringBuilder getAppend(StringBuilder result, int totalAmount) {
+        return result.append(String.format("Amount owed is %s%n", usd(totalAmount)));
+    }
+
+    private static String usd(int totalAmount) {
+        return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.PERCENT_FACTOR);
     }
 
     private int getVolumeCredits(Performance performance, StringBuilder result, NumberFormat frmt, int results) {
