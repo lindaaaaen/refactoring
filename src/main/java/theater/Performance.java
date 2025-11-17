@@ -22,5 +22,3 @@ public class Performance {
         return audience;
     }
 }
-
-
